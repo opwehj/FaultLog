@@ -51,9 +51,10 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGN_ENTITLEMENTS="" \
-            build
+            build 2>&1 | tee build.log | tail -n 200
 
       - name: 打包 IPA
+        if: success()
         run: |
           mkdir -p Payload
           cp -R build/Build/Products/Release-iphoneos/FaultLog.app Payload/
@@ -61,13 +62,15 @@ jobs:
           ls -lh FaultLog.ipa
 
       - name: 上传构建产物
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: FaultLog-ipa
           path: FaultLog.ipa
           if-no-files-found: error
 
-      - name: 发布到 Release（方便直接下载）
+      - name: 发布到 Release
+        if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -75,3 +78,55 @@ jobs:
           gh release create v1.0 FaultLog.ipa \
             --title "FaultLog v1.0（未签名 IPA）" \
             --notes "直接用 TrollStore 安装（支持 iOS 15+）。"
+
+      - name: 上传到公开镜像（免登录下载）
+        if: success()
+        run: |
+          set +e
+          M=""
+          R1=$(curl -fsS --max-time 90 -F "file=@FaultLog.ipa" -F "expires=72" https://0x0.st 2>&1)
+          echo "0x0.st -> $R1"
+          if echo "$R1" | head -n1 | grep -q '^https'; then M=$(echo "$R1" | head -n1); fi
+          if [ -z "$M" ]; then
+            R2=$(curl -fsS --max-time 90 -F "file=@FaultLog.ipa" https://envs.sh 2>&1)
+            echo "envs.sh -> $R2"
+            if echo "$R2" | head -n1 | grep -q '^https'; then M=$(echo "$R2" | head -n1); fi
+          fi
+          if [ -z "$M" ]; then
+            R3=$(curl -fsS --max-time 90 -F "file=@FaultLog.ipa" https://tmpfiles.org/api/v1/upload 2>&1)
+            echo "tmpfiles -> $R3"
+            U=$(echo "$R3" | sed -n 's/.*"url":"\([^"]*\)".*/\1/p')
+            if [ -n "$U" ]; then M=$(echo "$U" | sed 's#tmpfiles.org/#tmpfiles.org/dl/#'); fi
+          fi
+          if [ -z "$M" ]; then
+            R4=$(curl -fsS --max-time 120 -F "reqtype=fileupload" -F "time=72h" -F "fileToUpload=@FaultLog.ipa" https://litterbox.catbox.moe/resources/internals/api.php 2>&1)
+            echo "litterbox -> $R4"
+            if echo "$R4" | head -n1 | grep -q '^https'; then M=$(echo "$R4" | head -n1); fi
+          fi
+          echo "MIRROR_URL=$M" >> $GITHUB_ENV
+          echo "最终镜像地址：${M:-（全部失败）}"
+
+      - name: 写回构建报告
+        if: always()
+        run: |
+          {
+            echo "# CI 构建报告"
+            echo ""
+            echo "- 时间（UTC）：$(date -u '+%Y-%m-%d %H:%M:%S')"
+            echo "- 任务结果：${{ job.status }}"
+            echo "- IPA 大小（字节）：$(stat -f%z FaultLog.ipa 2>/dev/null || echo 0)"
+            echo "- 公开镜像地址：${MIRROR_URL:-（未获得）}"
+            echo "- 最近提交：$(git rev-parse --short HEAD)"
+            echo ""
+            echo "## 编译日志尾部"
+            echo ""
+            echo '```'
+            tail -n 400 build.log 2>/dev/null || echo "(无日志)"
+            echo '```'
+          } > ci-report.md
+          cat ci-report.md
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ci-report.md
+          git commit -m "ci: 构建报告 $(date -u '+%Y-%m-%dT%H:%M:%SZ')" || echo "无变更"
+          git push || echo "推送报告失败"
