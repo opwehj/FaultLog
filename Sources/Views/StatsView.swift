@@ -74,7 +74,7 @@ struct StatsView: View {
     private var summaryCard: some View {
         CardBox {
             HStack(spacing: 0) {
-                summaryItem(title: "总记录", value: "\(store.records.count)", color: Theme.navy)
+                summaryItem(title: "总记录", value: "\(store.records.count)", color: Theme.accent)
                 divider
                 summaryItem(title: "待处理", value: "\(pendingCount)", color: Theme.statusColor(.pending))
                 divider
@@ -87,7 +87,7 @@ struct StatsView: View {
 
     private var divider: some View {
         Rectangle()
-            .fill(Color(red: 0.92, green: 0.92, blue: 0.92).opacity(1))
+            .fill(Theme.trackBackground)
             .frame(width: 1, height: 34)
     }
 
@@ -142,7 +142,7 @@ struct StatsView: View {
                     .font(.system(size: 13, weight: .semibold))
                 let maxValue = typeCounts.map { $0.count }.max() ?? 0
                 ForEach(typeCounts) { item in
-                    StatBar(title: item.name, value: item.count, maxValue: maxValue, color: Theme.navy)
+                    StatBar(title: item.name, value: item.count, maxValue: maxValue, color: Theme.accent)
                 }
             }
         }
@@ -176,7 +176,7 @@ struct StatsView: View {
                     let maxValue = monthlyCounts.map { $0.count }.max() ?? 0
                     ForEach(monthlyCounts) { item in
                         StatBar(title: item.name, value: item.count, maxValue: maxValue,
-                                color: Color(red: 0.22, green: 0.49, blue: 0.45))
+                                color: Theme.teal)
                     }
                 }
             }

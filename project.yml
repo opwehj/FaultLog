@@ -33,7 +33,6 @@ targets:
         CFBundlePackageType: APPL
         LSRequiresIPhoneOS: true
         UILaunchScreen: {}
-        UIUserInterfaceStyle: Light
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         NSCameraUsageDescription: 需要使用相机拍摄设备故障照片，照片仅保存在本机

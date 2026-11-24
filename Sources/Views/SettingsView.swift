@@ -239,7 +239,7 @@ struct SettingsView: View {
                         }
                     } label: {
                         Image(systemName: "qrcode")
-                            .foregroundColor(Theme.navy)
+                            .foregroundColor(Theme.accent)
                     }
                     .buttonStyle(.borderless)
                 }

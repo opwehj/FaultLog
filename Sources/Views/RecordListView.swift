@@ -104,8 +104,8 @@ struct RecordListView: View {
                         .font(.system(size: 12, weight: .medium))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .background(projectFilter.isEmpty ? Color.white : Theme.navy)
-                        .foregroundColor(projectFilter.isEmpty ? Theme.navy : .white)
+                        .background(projectFilter.isEmpty ? Theme.cardBackground : Theme.accent)
+                        .foregroundColor(projectFilter.isEmpty ? Theme.accent : Theme.onAccent)
                         .cornerRadius(9)
                     }
                 }
@@ -117,19 +117,19 @@ struct RecordListView: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
         }
-        .background(Color.white.opacity(0.6))
+        .background(Theme.cardBackground.opacity(0.6))
     }
 
     private func filterChip(title: String, active: Bool,
-                            color: Color = Theme.navy,
+                            color: Color = Theme.accent,
                             action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
                 .font(.system(size: 12, weight: .medium))
                 .padding(.horizontal, 11)
                 .padding(.vertical, 6)
-                .background(active ? color : Color.white)
-                .foregroundColor(active ? .white : color)
+                .background(active ? color : Theme.cardBackground)
+                .foregroundColor(active ? Theme.onAccent : color)
                 .cornerRadius(9)
         }
         .buttonStyle(.plain)
@@ -195,11 +195,11 @@ struct RecordListView: View {
         VStack(spacing: 16) {
             ZStack {
                 Circle()
-                    .fill(Theme.navy.opacity(0.06))
+                    .fill(Theme.accent.opacity(0.10))
                     .frame(width: 120, height: 120)
                 Image(systemName: "camera.viewfinder")
                     .font(.system(size: 44))
-                    .foregroundColor(Theme.navy.opacity(0.55))
+                    .foregroundColor(Theme.accent.opacity(0.75))
             }
             Text("还没有记录")
                 .font(.system(size: 18, weight: .semibold))
@@ -215,7 +215,7 @@ struct RecordListView: View {
                     .font(.system(size: 15, weight: .semibold))
                     .padding(.horizontal, 26)
                     .padding(.vertical, 12)
-                    .background(Theme.navy)
+                    .background(Theme.ctaBackground)
                     .foregroundColor(.white)
                     .cornerRadius(24)
             }
@@ -336,7 +336,7 @@ struct RecordRow: View {
 
                     Text(record.detail)
                         .font(.system(size: 13))
-                        .foregroundColor(Color(red: 0.25, green: 0.25, blue: 0.25).opacity(1))
+                        .foregroundColor(.primary)
                         .lineLimit(2)
                         .lineSpacing(2)
 
@@ -372,9 +372,9 @@ struct RecordRow: View {
                     .scaledToFill()
             } else {
                 ZStack {
-                    Color(red: 0.95, green: 0.95, blue: 0.95)
+                    Theme.fieldBackground
                     Image(systemName: "photo")
-                        .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7).opacity(1))
+                        .foregroundColor(Theme.placeholderIcon)
                 }
             }
         }

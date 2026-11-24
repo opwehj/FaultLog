@@ -30,7 +30,7 @@ struct ContentView: View {
                     Label("设置", systemImage: "gearshape")
                 }
         }
-        .accentColor(Theme.navy)
+        .accentColor(Theme.accent)
         .overlay(lockOverlay)
         .onAppear {
             if settings.lockEnabled {

@@ -143,7 +143,7 @@ struct RecordEditorView: View {
             if let video = draft.video {
                 HStack {
                     Image(systemName: "film")
-                        .foregroundColor(Theme.navy)
+                        .foregroundColor(Theme.accent)
                     Text("已附一段视频")
                         .font(.footnote)
                         .foregroundColor(.secondary)
@@ -184,7 +184,7 @@ struct RecordEditorView: View {
                         .resizable()
                         .scaledToFill()
                 } else {
-                    Color(red: 0.92, green: 0.92, blue: 0.92)
+                    Theme.separator
                 }
             }
             .frame(width: 82, height: 82)
@@ -211,8 +211,8 @@ struct RecordEditorView: View {
                     .font(.caption2)
             }
             .frame(width: 82, height: 82)
-            .foregroundColor(Theme.navy)
-            .background(Color(red: 0.96, green: 0.96, blue: 0.96))
+            .foregroundColor(Theme.accent)
+            .background(Theme.fieldBackground)
             .cornerRadius(10)
         }
         .buttonStyle(.plain)
@@ -225,7 +225,7 @@ struct RecordEditorView: View {
                 .font(.system(size: 12, weight: .medium))
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
-                .background(Color(red: 0.96, green: 0.96, blue: 0.96))
+                .background(Theme.fieldBackground)
                 .cornerRadius(9)
         }
         .buttonStyle(.plain)
@@ -363,7 +363,7 @@ struct RecordEditorView: View {
                     Label(speech.isRecording ? "停止" : "语音输入",
                           systemImage: speech.isRecording ? "stop.circle.fill" : "mic.fill")
                         .font(.footnote)
-                        .foregroundColor(speech.isRecording ? .red : Theme.navy)
+                        .foregroundColor(speech.isRecording ? .red : Theme.accent)
                 }
 
                 Button {
@@ -409,7 +409,7 @@ struct RecordEditorView: View {
                                     draft.detail += "，" + phrase
                                 }
                             } label: {
-                                Chip(text: phrase, color: Theme.navy, background: Color(red: 0.94, green: 0.94, blue: 0.94))
+                                Chip(text: phrase, color: Theme.accent, background: Theme.chipBackground)
                             }
                             .buttonStyle(.plain)
                         }
@@ -610,7 +610,7 @@ struct RecordEditorView: View {
                 ForEach(draft.timeline.sorted { $0.date > $1.date }) { event in
                     HStack(spacing: 8) {
                         Circle()
-                            .fill(Theme.navy.opacity(0.25))
+                            .fill(Theme.accent.opacity(0.45))
                             .frame(width: 7, height: 7)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(event.text)

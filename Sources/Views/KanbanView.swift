@@ -49,7 +49,7 @@ struct KanbanView: View {
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 7)
                     .padding(.vertical, 2)
-                    .background(Color.white)
+                    .background(Theme.cardBackground)
                     .cornerRadius(9)
                 Spacer()
             }
@@ -75,7 +75,7 @@ struct KanbanView: View {
             }
             .frame(maxHeight: .infinity)
         }
-        .background(Color.white.opacity(0.55))
+        .background(Theme.cardBackground.opacity(0.55))
         .cornerRadius(16)
     }
 
@@ -93,7 +93,7 @@ struct KanbanView: View {
             }
             Text(record.detail)
                 .font(.system(size: 12))
-                .foregroundColor(Color(red: 0.3, green: 0.3, blue: 0.3).opacity(1))
+                .foregroundColor(.secondary)
                 .lineLimit(2)
             HStack(spacing: 6) {
                 Text(record.faultType)
@@ -110,7 +110,7 @@ struct KanbanView: View {
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
+        .background(Theme.cardBackground)
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 1)
         .contextMenu {
