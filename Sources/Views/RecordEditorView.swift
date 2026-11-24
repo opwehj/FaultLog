@@ -188,7 +188,7 @@ struct RecordEditorView: View {
                         .resizable()
                         .scaledToFill()
                 } else {
-                    Color(white: 0.92)
+                    Color(red: 0.92, green: 0.92, blue: 0.92)
                 }
             }
             .frame(width: 82, height: 82)
@@ -216,7 +216,7 @@ struct RecordEditorView: View {
             }
             .frame(width: 82, height: 82)
             .foregroundColor(Theme.navy)
-            .background(Color(white: 0.96))
+            .background(Color(red: 0.96, green: 0.96, blue: 0.96))
             .cornerRadius(10)
         }
         .buttonStyle(.plain)
@@ -229,7 +229,7 @@ struct RecordEditorView: View {
                 .font(.system(size: 12, weight: .medium))
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
-                .background(Color(white: 0.96))
+                .background(Color(red: 0.96, green: 0.96, blue: 0.96))
                 .cornerRadius(9)
         }
         .buttonStyle(.plain)
@@ -413,7 +413,7 @@ struct RecordEditorView: View {
                                     draft.detail += "，" + phrase
                                 }
                             } label: {
-                                Chip(text: phrase, color: Theme.navy, background: Color(white: 0.94))
+                                Chip(text: phrase, color: Theme.navy, background: Color(red: 0.94, green: 0.94, blue: 0.94))
                             }
                             .buttonStyle(.plain)
                         }

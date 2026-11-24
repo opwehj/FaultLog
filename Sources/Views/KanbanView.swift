@@ -93,7 +93,7 @@ struct KanbanView: View {
             }
             Text(record.detail)
                 .font(.system(size: 12))
-                .foregroundColor(Color(white: 0.3, alpha: 1))
+                .foregroundColor(Color(red: 0.3, green: 0.3, blue: 0.3).opacity(1))
                 .lineLimit(2)
             HStack(spacing: 6) {
                 Text(record.faultType)

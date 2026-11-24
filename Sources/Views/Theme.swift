@@ -28,7 +28,7 @@ enum Theme {
         switch urgency {
         case "停机": return Color(red: 0.75, green: 0.11, blue: 0.12)
         case "紧急": return Color(red: 0.90, green: 0.32, blue: 0.05)
-        default: return Color(white: 0.45, alpha: 1)
+        default: return Color(red: 0.45, green: 0.45, blue: 0.45).opacity(1)
         }
     }
 }
@@ -55,7 +55,7 @@ struct CardBox<Content: View>: View {
 /// 小标签
 struct Chip: View {
     let text: String
-    var color: Color = Color(white: 0.45, alpha: 1)
+    var color: Color = Color(red: 0.45, green: 0.45, blue: 0.45).opacity(1)
     var background: Color = Color(red: 0.95, green: 0.96, blue: 0.97)
 
     var body: some View {
@@ -90,7 +90,7 @@ struct StatBar: View {
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(Color(white: 0.93, alpha: 1))
+                        .fill(Color(red: 0.93, green: 0.93, blue: 0.93).opacity(1))
                     RoundedRectangle(cornerRadius: 4)
                         .fill(color)
                         .frame(width: maxValue > 0

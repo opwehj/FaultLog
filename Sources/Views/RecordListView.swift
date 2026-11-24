@@ -347,7 +347,7 @@ struct RecordRow: View {
 
                     Text(record.detail)
                         .font(.system(size: 13))
-                        .foregroundColor(Color(white: 0.25, alpha: 1))
+                        .foregroundColor(Color(red: 0.25, green: 0.25, blue: 0.25).opacity(1))
                         .lineLimit(2)
                         .lineSpacing(2)
 
@@ -383,9 +383,9 @@ struct RecordRow: View {
                     .scaledToFill()
             } else {
                 ZStack {
-                    Color(white: 0.95)
+                    Color(red: 0.95, green: 0.95, blue: 0.95)
                     Image(systemName: "photo")
-                        .foregroundColor(Color(white: 0.7, alpha: 1))
+                        .foregroundColor(Color(red: 0.7, green: 0.7, blue: 0.7).opacity(1))
                 }
             }
         }

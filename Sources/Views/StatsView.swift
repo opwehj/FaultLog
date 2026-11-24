@@ -87,7 +87,7 @@ struct StatsView: View {
 
     private var divider: some View {
         Rectangle()
-            .fill(Color(white: 0.92, alpha: 1))
+            .fill(Color(red: 0.92, green: 0.92, blue: 0.92).opacity(1))
             .frame(width: 1, height: 34)
     }
 
