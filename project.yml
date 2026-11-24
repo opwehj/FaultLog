@@ -32,6 +32,8 @@ targets:
         CFBundleVersion: "1"
         CFBundlePackageType: APPL
         LSRequiresIPhoneOS: true
+        LSApplicationCategoryType: public.app-category.productivity
+        ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait

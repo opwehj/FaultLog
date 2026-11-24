@@ -1,10 +1,10 @@
 # CI 构建报告
 
-- 时间（UTC）：2026-11-24 12:13:40
+- 时间（UTC）：2026-11-24 12:27:24
 - 任务结果：success
 - 运行器：macos-15-intel
-- IPA 大小（字节）：2392588
-- 公开镜像地址：https://tmpfiles.org/dl/wXAXjQNjDChN/faultlog.ipa
+- IPA 大小（字节）：2393106
+- 公开镜像地址：https://tmpfiles.org/dl/wgAGjUxBwMXs/faultlog.ipa
 
 ## 编译错误（前 60 条）
 
@@ -14,9 +14,9 @@
 ## 警告（前 20 条）
 
 ```
-165:/Users/runner/work/FaultLog/FaultLog/Sources/Support/ImageUtils.swift:50:17: warning: immutable value 'attrs' was never used; consider replacing with '_' or removing it
-169:/Users/runner/work/FaultLog/FaultLog/Sources/Support/ImageUtils.swift:75:13: warning: initialization of immutable value 'titleFont' was never used; consider replacing with assignment to '_' or removing it
-219:2026-11-24 12:13:29.107 appintentsmetadataprocessor[6165:21394] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+169:/Users/runner/work/FaultLog/FaultLog/Sources/Support/ImageUtils.swift:50:17: warning: immutable value 'attrs' was never used; consider replacing with '_' or removing it
+173:/Users/runner/work/FaultLog/FaultLog/Sources/Support/ImageUtils.swift:75:13: warning: initialization of immutable value 'titleFont' was never used; consider replacing with assignment to '_' or removing it
+228:2026-11-24 12:27:09.935 appintentsmetadataprocessor[22767:60837] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
 ```
 
 ## 日志尾部（400 行）
@@ -65,15 +65,15 @@ ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/X
 
 ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
 
-Build description signature: 26213d0a848d20fd86435c19cbf624d3
-Build description path: /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/XCBuildData/26213d0a848d20fd86435c19cbf624d3.xcbuilddata
-ClangStatCache /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk /Users/runner/work/FaultLog/FaultLog/build/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache
-    cd /Users/runner/work/FaultLog/FaultLog/FaultLog.xcodeproj
-    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -o /Users/runner/work/FaultLog/FaultLog/build/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache
-
+Build description signature: 4b475ed126359c88ff340186840f8dd9
+Build description path: /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/XCBuildData/4b475ed126359c88ff340186840f8dd9.xcbuilddata
 CreateBuildDirectory /Users/runner/work/FaultLog/FaultLog/build/Build/Products
     cd /Users/runner/work/FaultLog/FaultLog/FaultLog.xcodeproj
     builtin-create-build-directory /Users/runner/work/FaultLog/FaultLog/build/Build/Products
+
+ClangStatCache /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk /Users/runner/work/FaultLog/FaultLog/build/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache
+    cd /Users/runner/work/FaultLog/FaultLog/FaultLog.xcodeproj
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -o /Users/runner/work/FaultLog/FaultLog/build/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache
 
 CreateBuildDirectory /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex
     cd /Users/runner/work/FaultLog/FaultLog/FaultLog.xcodeproj
@@ -91,17 +91,17 @@ CreateBuildDirectory /Users/runner/work/FaultLog/FaultLog/build/Build/Intermedia
     cd /Users/runner/work/FaultLog/FaultLog/FaultLog.xcodeproj
     builtin-create-build-directory /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
 
-WriteAuxiliaryFile /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftConstValuesFileList (in target 'FaultLog' from project 'FaultLog')
+WriteAuxiliaryFile /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftFileList (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
-    write-file /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftConstValuesFileList
+    write-file /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftFileList
 
 WriteAuxiliaryFile /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog_const_extract_protocols.json (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
     write-file /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog_const_extract_protocols.json
 
-WriteAuxiliaryFile /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftFileList (in target 'FaultLog' from project 'FaultLog')
+WriteAuxiliaryFile /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftConstValuesFileList (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
-    write-file /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftFileList
+    write-file /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftConstValuesFileList
 
 WriteAuxiliaryFile /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.LinkFileList (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
@@ -147,10 +147,6 @@ MkDir /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos
     cd /Users/runner/work/FaultLog/FaultLog
     /bin/mkdir -p /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app
 
-MkDir /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_output/unthinned (in target 'FaultLog' from project 'FaultLog')
-    cd /Users/runner/work/FaultLog/FaultLog
-    /bin/mkdir -p /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_output/unthinned
-
 MkDir /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_output/thinned (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
     /bin/mkdir -p /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_output/thinned
@@ -163,6 +159,14 @@ GenerateAssetSymbols /Users/runner/work/FaultLog/FaultLog/Sources/Assets.xcasset
 /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/DerivedSources/GeneratedAssetSymbols.h
 /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/DerivedSources/GeneratedAssetSymbols.swift
 
+
+MkDir /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_output/unthinned (in target 'FaultLog' from project 'FaultLog')
+    cd /Users/runner/work/FaultLog/FaultLog
+    /bin/mkdir -p /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_output/unthinned
+
+CpResource /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/PrivacyInfo.xcprivacy /Users/runner/work/FaultLog/FaultLog/Sources/PrivacyInfo.xcprivacy (in target 'FaultLog' from project 'FaultLog')
+    cd /Users/runner/work/FaultLog/FaultLog
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/runner/work/FaultLog/FaultLog/Sources/PrivacyInfo.xcprivacy /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app
 
 CompileAssetCatalogVariant thinned /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app /Users/runner/work/FaultLog/FaultLog/Sources/Assets.xcassets (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
@@ -199,8 +203,8 @@ LinkAssetCatalog /Users/runner/work/FaultLog/FaultLog/Sources/Assets.xcassets (i
     cd /Users/runner/work/FaultLog/FaultLog
     builtin-linkAssetCatalog --thinned /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_output/thinned --thinned-dependencies /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_generated_info.plist_unthinned --output /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app --plist-output /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/assetcatalog_generated_info.plist
 note: Emplaced /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/Assets.car (in target 'FaultLog' from project 'FaultLog')
-note: Emplaced /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/AppIcon60x60@2x.png (in target 'FaultLog' from project 'FaultLog')
 note: Emplaced /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/AppIcon76x76@2x~ipad.png (in target 'FaultLog' from project 'FaultLog')
+note: Emplaced /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/AppIcon60x60@2x.png (in target 'FaultLog' from project 'FaultLog')
 
 ProcessInfoPlistFile /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/Info.plist /Users/runner/work/FaultLog/FaultLog/Support/Info.plist (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
@@ -236,16 +240,16 @@ Ld /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/Fa
     cd /Users/runner/work/FaultLog/FaultLog
     /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios15.0 -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -Os -L/Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos -L/Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos -F/Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos -F/Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos -filelist /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.LinkFileList -Xlinker -rpath -Xlinker @executable_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog_lto.o -Xlinker -dependency_info -Xlinker /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.swiftmodule -o /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/FaultLog
 
-ExtractAppIntentsMetadata (in target 'FaultLog' from project 'FaultLog')
-    cd /Users/runner/work/FaultLog/FaultLog
-    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name FaultLog --sdk-root /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk --xcode-version 16F6 --platform-family iOS --deployment-target 15.0 --bundle-identifier com.doubao.faultlog --output /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app --target-triple arm64-apple-ios15.0 --binary-file /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/FaultLog --dependency-file /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog_dependency_info.dat --stringsdata-file /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftFileList --metadata-file-list /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/FaultLog.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/FaultLog.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
-2026-11-24 12:13:29.097 appintentsmetadataprocessor[6165:21394] Starting appintentsmetadataprocessor export
-2026-11-24 12:13:29.107 appintentsmetadataprocessor[6165:21394] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
-
 CopySwiftLibs /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
     builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/FaultLog --scan-folder /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/Frameworks --scan-folder /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/PlugIns --scan-folder /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/SystemExtensions --scan-folder /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/Extensions --platform iphoneos --toolchain /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
 Ignoring --strip-bitcode because --sign was not passed
+
+ExtractAppIntentsMetadata (in target 'FaultLog' from project 'FaultLog')
+    cd /Users/runner/work/FaultLog/FaultLog
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name FaultLog --sdk-root /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk --xcode-version 16F6 --platform-family iOS --deployment-target 15.0 --bundle-identifier com.doubao.faultlog --output /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app --target-triple arm64-apple-ios15.0 --binary-file /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/FaultLog --dependency-file /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog_dependency_info.dat --stringsdata-file /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftFileList --metadata-file-list /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/FaultLog.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/FaultLog.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/Objects-normal/arm64/FaultLog.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-11-24 12:27:09.921 appintentsmetadataprocessor[22767:60837] Starting appintentsmetadataprocessor export
+2026-11-24 12:27:09.935 appintentsmetadataprocessor[22767:60837] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
 
 GenerateDSYMFile /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app.dSYM /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/FaultLog (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
@@ -254,8 +258,8 @@ GenerateDSYMFile /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Relea
 AppIntentsSSUTraining (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
     /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/Info.plist --temp-dir-path /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/ssu --bundle-id com.doubao.faultlog --product-path /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app --extracted-metadata-path /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app/Metadata.appintents --metadata-file-list /Users/runner/work/FaultLog/FaultLog/build/Build/Intermediates.noindex/FaultLog.build/Release-iphoneos/FaultLog.build/FaultLog.DependencyMetadataFileList --archive-ssu-assets
-2026-11-24 12:13:29.172 appintentsnltrainingprocessor[6168:21402] Parsing options for appintentsnltrainingprocessor
-2026-11-24 12:13:29.174 appintentsnltrainingprocessor[6168:21402] No AppShortcuts found - Skipping.
+2026-11-24 12:27:10.216 appintentsnltrainingprocessor[22769:60841] Parsing options for appintentsnltrainingprocessor
+2026-11-24 12:27:10.219 appintentsnltrainingprocessor[22769:60841] No AppShortcuts found - Skipping.
 
 RegisterExecutionPolicyException /Users/runner/work/FaultLog/FaultLog/build/Build/Products/Release-iphoneos/FaultLog.app (in target 'FaultLog' from project 'FaultLog')
     cd /Users/runner/work/FaultLog/FaultLog
