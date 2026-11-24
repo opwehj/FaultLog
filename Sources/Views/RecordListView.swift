@@ -11,18 +11,17 @@ struct RecordListView: View {
     @State private var statusFilter: FaultStatus? = nil
     @State private var projectFilter: String = ""
     @State private var currentSheet: Sheet?
+    @State private var cameraPresented = false
     @State private var pendingImage: UIImage?
     @State private var exportOnlyFiltered = true
     @State private var toast: String?
 
     enum Sheet: Identifiable {
-        case camera
         case editor(UIImage?, FaultRecord?)
         case share(URL)
 
         var id: String {
             switch self {
-            case .camera: return "camera"
             case .editor: return "editor"
             case .share: return "share"
             }
@@ -56,16 +55,17 @@ struct RecordListView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        currentSheet = .camera
+                        cameraPresented = true
                     } label: {
                         Image(systemName: "camera.fill")
                     }
                 }
             }
+            .fullScreenCover(isPresented: $cameraPresented) {
+                CameraPicker(mode: .photo, onImage: handleCamera)
+            }
             .sheet(item: $currentSheet) { sheet in
                 switch sheet {
-                case .camera:
-                    CameraPicker(mode: .photo, onImage: handleCamera)
                 case .editor(let image, let record):
                     RecordEditorView(images: image.map { [$0] } ?? [], existing: record)
                         .environmentObject(store)
@@ -290,12 +290,9 @@ struct RecordListView: View {
     }
 
     private func handleCamera(_ image: UIImage?) {
-        guard let image = image else {
-            currentSheet = nil
-            return
-        }
-        currentSheet = nil
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+        cameraPresented = false
+        guard let image = image else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
             currentSheet = .editor(image, nil)
         }
     }

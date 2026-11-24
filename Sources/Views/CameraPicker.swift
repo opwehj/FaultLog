@@ -22,15 +22,17 @@ struct CameraPicker: UIViewControllerRepresentable {
         let picker = UIImagePickerController()
         picker.delegate = context.coordinator
         picker.allowsEditing = false
+        picker.modalPresentationStyle = .fullScreen
         let hasCamera = UIImagePickerController.isSourceTypeAvailable(.camera)
         picker.sourceType = hasCamera ? .camera : .photoLibrary
         switch mode {
         case .photo:
             picker.mediaTypes = ["public.image"]
+            if hasCamera { picker.cameraCaptureMode = .photo }
         case .video:
             picker.mediaTypes = ["public.movie"]
             picker.videoQuality = .typeMedium
-            picker.mediaTypes = hasCamera ? ["public.movie"] : ["public.movie"]
+            if hasCamera { picker.cameraCaptureMode = .video }
         }
         return picker
     }
@@ -49,6 +51,7 @@ struct CameraPicker: UIViewControllerRepresentable {
 
         func imagePickerController(_ picker: UIImagePickerController,
                                    didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            picker.dismiss(animated: true)
             if let url = info[.mediaURL] as? URL {
                 onVideo?(url)
                 return
@@ -57,6 +60,7 @@ struct CameraPicker: UIViewControllerRepresentable {
         }
 
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true)
             onImage(nil)
             onVideo?(nil)
         }
