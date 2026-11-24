@@ -2,20 +2,18 @@ import Foundation
 import Combine
 import UIKit
 
-/// 数据仓库：负责记录的本地持久化、照片存取与导出
+/// 数据仓库：记录持久化、照片/视频存取、备份恢复、提醒与同步调度
 final class FaultStore: ObservableObject {
 
     @Published private(set) var records: [FaultRecord] = []
+    /// 最近一次同步结果的提示
+    @Published var syncMessage: String? = nil
 
-    private let fileManager = FileManager.default
+    static let documentsDirectory: URL = {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    }()
 
-    private var documentsURL: URL {
-        fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-    }
-
-    private var dataURL: URL {
-        documentsURL.appendingPathComponent("fault_records.json")
-    }
+    private var dataURL: URL { FaultStore.documentsDirectory.appendingPathComponent("fault_records.json") }
 
     init() {
         load()
@@ -43,47 +41,66 @@ final class FaultStore: ObservableObject {
         }
     }
 
-    // MARK: - 增删改
-
     func add(_ record: FaultRecord) {
-        records.insert(record, at: 0)
+        var new = record
+        if new.timeline.isEmpty {
+            new.timeline = [TimelineEvent(date: Date(), text: "创建记录（\(new.status.rawValue)）")]
+        }
+        records.insert(new, at: 0)
         persist()
+        notifyIfNeeded(new)
+        syncIfNeeded(new)
     }
 
     func update(_ record: FaultRecord) {
         guard let index = records.firstIndex(where: { $0.id == record.id }) else { return }
-        records[index] = record
+        var updated = record
+        let oldStatus = records[index].status
+        if oldStatus != updated.status {
+            updated.timeline.append(TimelineEvent(date: Date(), text: "状态改为 \(updated.status.rawValue)"))
+        }
+        records[index] = updated
+        records.sort { $0.createdAt > $1.createdAt }
         persist()
+        notifyIfNeeded(updated)
+    }
+
+    func changeStatus(_ record: FaultRecord, to status: FaultStatus) {
+        var updated = record
+        updated.status = status
+        if status == .fixed && updated.endTime == nil {
+            updated.endTime = Date()
+        }
+        if status != .fixed && updated.endTime != nil {
+            updated.endTime = nil
+        }
+        update(updated)
     }
 
     func delete(_ record: FaultRecord) {
-        if let name = record.photoFileName {
-            deletePhoto(named: name)
-        }
+        for name in record.photos { deleteFile(named: name) }
+        if let video = record.video { deleteFile(named: video) }
+        NotificationService.shared.cancel(for: record.id)
         records.removeAll { $0.id == record.id }
         persist()
     }
 
-    func delete(at offsets: IndexSet) {
-        let targets = offsets.compactMap { index -> FaultRecord? in
-            guard records.indices.contains(index) else { return nil }
-            return records[index]
-        }
-        for record in targets {
-            delete(record)
-        }
+    func record(id: UUID) -> FaultRecord? {
+        records.first { $0.id == id }
     }
 
-    // MARK: - 照片
+    // MARK: - 照片 / 视频
 
-    /// 保存图片，返回文件名
-    func savePhoto(_ image: UIImage) -> String? {
-        let resized = image.resized(maxSide: 1600)
-        guard let data = resized.jpegData(compressionQuality: 0.7) else { return nil }
+    /// 保存照片（按设置叠加水印），返回文件名
+    func savePhoto(_ image: UIImage, record: FaultRecord?, showLocation: Bool) -> String? {
+        var output = image.resized(maxSide: 1600)
+        if AppSettings.shared.watermarkEnabled {
+            output = Watermark.draw(on: output, record: record, showLocation: showLocation)
+        }
+        guard let data = output.jpegData(compressionQuality: 0.72) else { return nil }
         let name = "fault_\(UUID().uuidString.prefix(8)).jpg"
-        let url = documentsURL.appendingPathComponent(name)
         do {
-            try data.write(to: url, options: .atomic)
+            try data.write(to: FaultStore.documentsDirectory.appendingPathComponent(name), options: .atomic)
             return name
         } catch {
             print("照片保存失败：\(error)")
@@ -91,122 +108,135 @@ final class FaultStore: ObservableObject {
         }
     }
 
-    func photoData(named name: String?) -> Data? {
-        guard let name = name else { return nil }
-        return try? Data(contentsOf: documentsURL.appendingPathComponent(name))
+    func saveVideo(from url: URL) -> String? {
+        let name = "fault_\(UUID().uuidString.prefix(8)).mov"
+        let target = FaultStore.documentsDirectory.appendingPathComponent(name)
+        do {
+            if FileManager.default.fileExists(atPath: target.path) {
+                try FileManager.default.removeItem(at: target)
+            }
+            try FileManager.default.copyItem(at: url, to: target)
+            return name
+        } catch {
+            print("视频保存失败：\(error)")
+            return nil
+        }
     }
 
-    func photo(named name: String?) -> UIImage? {
+    func photoData(named name: String) -> Data? {
+        try? Data(contentsOf: FaultStore.documentsDirectory.appendingPathComponent(name))
+    }
+
+    func photo(named name: String) -> UIImage? {
         guard let data = photoData(named: name) else { return nil }
         return UIImage(data: data)
     }
 
-    func deletePhoto(named name: String) {
-        try? fileManager.removeItem(at: documentsURL.appendingPathComponent(name))
+    func mediaURL(named name: String) -> URL {
+        FaultStore.documentsDirectory.appendingPathComponent(name)
     }
 
-    // MARK: - 导出 CSV（Excel 可直接打开）
-
-    func exportCSV() -> URL? {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
-
-        var csv = "\u{FEFF}" // UTF-8 BOM，避免 Excel 中文乱码
-        csv += "时间,设备名称,位置,故障类型,紧急程度,问题描述,处理状态,照片文件\n"
-
-        for record in records {
-            let cells = [
-                formatter.string(from: record.createdAt),
-                record.deviceName,
-                record.location,
-                record.faultType,
-                record.urgency,
-                record.detail,
-                record.status.rawValue,
-                record.photoFileName ?? ""
-            ]
-            csv += cells.map(csvEscape).joined(separator: ",") + "\n"
-        }
-
-        let url = documentsURL.appendingPathComponent("设备故障台账.csv")
-        do {
-            try csv.write(to: url, atomically: true, encoding: .utf8)
-            return url
-        } catch {
-            print("CSV 导出失败：\(error)")
-            return nil
-        }
+    func deleteFile(named name: String) {
+        try? FileManager.default.removeItem(at: FaultStore.documentsDirectory.appendingPathComponent(name))
     }
 
-    private func csvEscape(_ value: String) -> String {
-        if value.contains(",") || value.contains("\"") || value.contains("\n") {
-            return "\"" + value.replacingOccurrences(of: "\"", with: "\"\"") + "\""
+    // MARK: - 提醒
+
+    private func notifyIfNeeded(_ record: FaultRecord) {
+        guard AppSettings.shared.reminderEnabled, record.status != .fixed else {
+            NotificationService.shared.cancel(for: record.id)
+            return
         }
-        return value
+        let hours = AppSettings.shared.reminderHours
+        let fire = record.reminderAt ?? Date().addingTimeInterval(TimeInterval(hours * 3600))
+        NotificationService.shared.schedule(
+            for: record.id,
+            title: "还有故障没处理完",
+            body: "\(record.deviceName.isEmpty ? "某设备" : record.deviceName) · \(record.detail.prefix(40))",
+            at: fire
+        )
     }
 
-    // MARK: - 导出图文报告（单个 HTML，含照片，方便发给客户/维修）
+    // MARK: - 同步
 
-    func exportHTML() -> URL? {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "zh_CN")
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
-
-        var html = """
-        <!DOCTYPE html>
-        <html lang="zh-CN"><head><meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>设备故障台账</title>
-        <style>
-        body{font-family:-apple-system,"PingFang SC",sans-serif;margin:0;padding:16px;background:#f5f7fa;color:#1f2937}
-        h1{font-size:20px;margin:8px 0 4px}
-        .meta{color:#6b7280;font-size:13px;margin-bottom:16px}
-        .item{background:#fff;border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-        .head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-        .device{font-size:16px;font-weight:600}
-        .tag{font-size:12px;padding:2px 8px;border-radius:10px;background:#eff6ff;color:#1d4ed8;white-space:nowrap}
-        .row{font-size:13px;color:#4b5563;margin-top:6px}
-        .desc{font-size:14px;margin-top:8px;line-height:1.5;white-space:pre-wrap}
-        img{width:100%;border-radius:8px;margin-top:10px;display:block}
-        </style></head><body>
-        <h1>设备故障台账</h1>
-        <div class="meta">导出时间：\(formatter.string(from: Date()))　共 \(records.count) 条</div>
-        """
-
-        for record in records {
-            html += """
-            <div class="item">
-            <div class="head"><span class="device">\(htmlEscape(record.deviceName.isEmpty ? "未填写设备" : record.deviceName))</span><span class="tag">\(htmlEscape(record.status.rawValue))</span></div>
-            <div class="row">\(formatter.string(from: record.createdAt))　|　\(htmlEscape(record.location.isEmpty ? "—" : record.location))　|　\(htmlEscape(record.faultType))　|　\(htmlEscape(record.urgency))</div>
-            <div class="desc">\(htmlEscape(record.detail))</div>
-            """
-
-            if let data = photoData(named: record.photoFileName) {
-                let base64 = data.base64EncodedString()
-                html += "<img src=\"data:image/jpeg;base64,\(base64)\" alt=\"故障照片\">"
+    private func syncIfNeeded(_ record: FaultRecord) {
+        let settings = AppSettings.shared
+        guard settings.webhookEnabled, !settings.webhookURL.isEmpty else { return }
+        WebhookService.push(record: record, settings: settings) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self?.syncMessage = "已同步到 \(settings.webhookKind)"
+                case .failure(let error):
+                    self?.syncMessage = "同步失败：\(error.localizedDescription)"
+                }
             }
-
-            html += "</div>"
         }
+    }
 
-        html += "</body></html>"
+    // MARK: - 备份 / 恢复（含照片，单个 json 文件）
 
-        let url = documentsURL.appendingPathComponent("设备故障台账.html")
+    struct BackupPayload: Codable {
+        var version: Int = 1
+        var exportedAt: Date = Date()
+        var records: [FaultRecord]
+        var files: [String: String]  // 文件名 -> base64
+    }
+
+    func exportBackup() -> URL? {
+        var files: [String: String] = [:]
+        for record in records {
+            for name in record.photos {
+                if let data = photoData(named: name) {
+                    files[name] = data.base64EncodedString()
+                }
+            }
+            if let video = record.video,
+               let data = try? Data(contentsOf: mediaURL(named: video)) {
+                files[video] = data.base64EncodedString()
+            }
+        }
+        let payload = BackupPayload(records: records, files: files)
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd_HHmm"
+        let url = FaultStore.documentsDirectory
+            .appendingPathComponent("设备故障台账备份_\(formatter.string(from: Date())).json")
         do {
-            try html.write(to: url, atomically: true, encoding: .utf8)
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let data = try encoder.encode(payload)
+            try data.write(to: url, options: .atomic)
             return url
         } catch {
-            print("HTML 导出失败：\(error)")
+            print("备份失败：\(error)")
             return nil
         }
     }
 
-    private func htmlEscape(_ value: String) -> String {
-        value
-            .replacingOccurrences(of: "&", with: "&amp;")
-            .replacingOccurrences(of: "<", with: "&lt;")
-            .replacingOccurrences(of: ">", with: "&gt;")
-            .replacingOccurrences(of: "\"", with: "&quot;")
+    enum ImportError: LocalizedError {
+        case badFile
+        var errorDescription: String? { "备份文件无法解析" }
+    }
+
+    func importBackup(from url: URL) throws -> Int {
+        let data = try Data(contentsOf: url)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let payload = try decoder.decode(BackupPayload.self, from: data)
+        for (name, base64) in payload.files {
+            guard let imageData = Data(base64Encoded: base64) else { continue }
+            let target = FaultStore.documentsDirectory.appendingPathComponent(name)
+            if !FileManager.default.fileExists(atPath: target.path) {
+                try? imageData.write(to: target, options: .atomic)
+            }
+        }
+        var added = 0
+        for record in payload.records where !records.contains(where: { $0.id == record.id }) {
+            records.append(record)
+            added += 1
+        }
+        records.sort { $0.createdAt > $1.createdAt }
+        persist()
+        return added
     }
 }
