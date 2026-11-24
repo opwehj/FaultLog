@@ -1,0 +1,77 @@
+name: Build Unsigned IPA
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 准备应用图标
+        run: |
+          mkdir -p Sources/Assets.xcassets/AppIcon.appiconset
+          ICON="Sources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
+          if curl -fsSL --max-time 90 -o /tmp/icon.raw "https://aka.doubaocdn.com/s/HS36LUQo8o"; then
+            sips -s format jpeg --resampleHeightWidth 1024 1024 /tmp/icon.raw --out /tmp/icon.jpg >/dev/null 2>&1
+            sips -s format png /tmp/icon.jpg --out "$ICON" >/dev/null 2>&1 && echo "图标：CDN 获取成功"
+          fi
+          if [ ! -f "$ICON" ]; then
+            echo "图标：CDN 不可用，改用内置绘制"
+            python3 -m pip install --quiet pillow
+            python3 tools/fallback_icon.py "$ICON"
+          fi
+          file "$ICON" || true
+          sips -g pixelWidth -g pixelHeight "$ICON" || true
+
+      - name: 安装 XcodeGen
+        run: brew install xcodegen
+
+      - name: 生成 Xcode 工程
+        run: xcodegen generate
+
+      - name: 编译（不签名）
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project FaultLog.xcodeproj \
+            -scheme FaultLog \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_ENTITLEMENTS="" \
+            build
+
+      - name: 打包 IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/FaultLog.app Payload/
+          zip -qry FaultLog.ipa Payload
+          ls -lh FaultLog.ipa
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: FaultLog-ipa
+          path: FaultLog.ipa
+          if-no-files-found: error
+
+      - name: 发布到 Release（方便直接下载）
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete v1.0 --yes 2>/dev/null || true
+          gh release create v1.0 FaultLog.ipa \
+            --title "FaultLog v1.0（未签名 IPA）" \
+            --notes "直接用 TrollStore 安装（支持 iOS 15+）。"
