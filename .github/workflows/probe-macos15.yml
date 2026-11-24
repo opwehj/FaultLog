@@ -7,6 +7,6 @@ on:
 
 jobs:
   probe:
-    runs-on: macos-15
+    runs-on: macos-15-intel
     steps:
       - run: sw_vers && uname -m
