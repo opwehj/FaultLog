@@ -46,6 +46,19 @@ enum CameraPresenter {
 
     fileprivate static func release(_ delegate: CameraPresenterDelegate) {
         delegates.removeAll { $0 === delegate }
+        restoreAppearance()
+    }
+
+    /// 系统相机可能把窗口留在深色模式，退出后强制复位为浅色
+    fileprivate static func restoreAppearance() {
+        DispatchQueue.main.async {
+            let windows = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap { $0.windows }
+            for window in windows {
+                window.overrideUserInterfaceStyle = .light
+            }
+        }
     }
 
     private static func topViewController() -> UIViewController? {
