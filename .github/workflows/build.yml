@@ -13,27 +13,22 @@ jobs:
     runs-on: macos-15-intel
 
     steps:
-      - name: 拉取代码
+      - name: 拉取仓库
         uses: actions/checkout@v4
 
-      - name: 准备应用图标
+      - name: 下载源码包并解压
         run: |
-          mkdir -p Sources/Assets.xcassets/AppIcon.appiconset
-          ICON="Sources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
-          if curl -fsSL --max-time 90 -o /tmp/icon.raw "https://aka.doubaocdn.com/s/HS36LUQo8o"; then
-            sips -s format jpeg --resampleHeightWidth 1024 1024 /tmp/icon.raw --out /tmp/icon.jpg >/dev/null 2>&1
-            sips -s format png /tmp/icon.jpg --out "$ICON" >/dev/null 2>&1 && echo "图标：CDN 获取成功"
-          fi
-          if [ ! -f "$ICON" ]; then
-            echo "图标：CDN 不可用，改用内置绘制"
-            python3 -m pip install --quiet pillow
-            python3 tools/fallback_icon.py "$ICON"
-          fi
-          file "$ICON" || true
-          sips -g pixelWidth -g pixelHeight "$ICON" || true
+          URL=$(tr -d '\n\r ' < source-url.txt)
+          echo "源码包地址：$URL"
+          curl -fsSL --max-time 240 -o /tmp/src.zip "$URL"
+          unzip -o -q /tmp/src.zip -d .
+          echo "--- 源码文件 ---"
+          find Sources -name "*.swift" | sort
+          echo "--- 工程描述 ---"
+          ls -l project.yml
 
       - name: 安装 XcodeGen
-        run: brew install xcodegen
+        run: brew install xcodegen || brew upgrade xcodegen
 
       - name: 生成 Xcode 工程
         run: xcodegen generate
@@ -51,7 +46,7 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGN_ENTITLEMENTS="" \
-            build 2>&1 | tee build.log | tail -n 200
+            build 2>&1 | tee build.log | tail -n 120
 
       - name: 打包 IPA
         if: success()
@@ -76,7 +71,7 @@ jobs:
         run: |
           gh release delete v1.0 --yes 2>/dev/null || true
           gh release create v1.0 FaultLog.ipa \
-            --title "FaultLog v1.0（未签名 IPA）" \
+            --title "FaultLog v1.1（未签名 IPA）" \
             --notes "直接用 TrollStore 安装（支持 iOS 15+）。"
 
       - name: 上传到公开镜像（免登录下载）
@@ -98,11 +93,6 @@ jobs:
             U=$(echo "$R3" | sed -n 's/.*"url":"\([^"]*\)".*/\1/p')
             if [ -n "$U" ]; then M=$(echo "$U" | sed 's#tmpfiles.org/#tmpfiles.org/dl/#'); fi
           fi
-          if [ -z "$M" ]; then
-            R4=$(curl -fsS --max-time 120 -F "reqtype=fileupload" -F "time=72h" -F "fileToUpload=@FaultLog.ipa" https://litterbox.catbox.moe/resources/internals/api.php 2>&1)
-            echo "litterbox -> $R4"
-            if echo "$R4" | head -n1 | grep -q '^https'; then M=$(echo "$R4" | head -n1); fi
-          fi
           echo "MIRROR_URL=$M" >> $GITHUB_ENV
           echo "最终镜像地址：${M:-（全部失败）}"
 
@@ -117,17 +107,32 @@ jobs:
             echo "- 运行器：macos-15-intel"
             echo "- IPA 大小（字节）：$(stat -f%z FaultLog.ipa 2>/dev/null || echo 0)"
             echo "- 公开镜像地址：${MIRROR_URL:-（未获得）}"
-            echo "- 最近提交：$(git rev-parse --short HEAD)"
             echo ""
-            echo "## 编译日志尾部"
+            echo "## 编译错误（前 60 条）"
+            echo ""
+            echo '```'
+            grep -n "error:" build.log 2>/dev/null | head -60 || echo "(无匹配)"
+            echo '```'
+            echo ""
+            echo "## 警告（前 20 条）"
+            echo ""
+            echo '```'
+            grep -n "warning:" build.log 2>/dev/null | head -20 || echo "(无匹配)"
+            echo '```'
+            echo ""
+            echo "## 日志尾部（400 行）"
             echo ""
             echo '```'
             tail -n 400 build.log 2>/dev/null || echo "(无日志)"
             echo '```'
           } > ci-report.md
-          cat ci-report.md
+          head -80 ci-report.md
+
+      - name: 回写源码到仓库
+        if: always()
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add ci-report.md
-          git commit -m "ci: 构建报告 $(date -u '+%Y-%m-%dT%H:%M:%SZ')" || echo "无变更"
-          git push || echo "推送报告失败"
+          git add Sources project.yml tools Support ci-report.md 2>/dev/null || true
+          git commit -m "build: 同步源码与构建报告 $(date -u '+%Y-%m-%dT%H:%M:%SZ')" || echo "无变更"
+          git push || echo "推送失败"
