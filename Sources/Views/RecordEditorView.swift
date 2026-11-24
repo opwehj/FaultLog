@@ -16,19 +16,11 @@ struct RecordEditorView: View {
     @State private var draft: FaultRecord
     @State private var newImages: [UIImage] = []
     @State private var activeSheet: ActiveSheet?
-    @State private var capture: Capture?
     @State private var aiBusy = false
     @State private var aiMessage: String?
     @State private var showPhrases = false
     @StateObject private var speech = SpeechInput()
     @StateObject private var location = LocationService()
-
-    enum Capture: String, Identifiable {
-        case photo
-        case video
-
-        var id: String { rawValue }
-    }
 
     enum ActiveSheet: Identifiable {
         case album
@@ -86,14 +78,6 @@ struct RecordEditorView: View {
                         .disabled(!canSave)
                 }
             }
-            .fullScreenCover(item: $capture) { item in
-                switch item {
-                case .photo:
-                    CameraView(onImage: handleCamera)
-                case .video:
-                    CameraPicker(mode: .video, onImage: { _ in }, onVideo: handleVideo)
-                }
-            }
             .sheet(item: $activeSheet) { sheet in
                 switch sheet {
                 case .album:
@@ -146,9 +130,13 @@ struct RecordEditorView: View {
             .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
 
             HStack(spacing: 10) {
-                actionButton(title: "拍照", icon: "camera.fill") { capture = .photo }
+                actionButton(title: "拍照", icon: "camera.fill") {
+                    CameraPresenter.present(mode: .photo) { handleCamera($0) }
+                }
                 actionButton(title: "相册", icon: "photo.on.rectangle") { activeSheet = .album }
-                actionButton(title: "视频", icon: "video.fill") { capture = .video }
+                actionButton(title: "视频", icon: "video.fill") {
+                    CameraPresenter.present(mode: .video, onImage: { _ in }, onVideo: handleVideo)
+                }
             }
             .padding(.vertical, 2)
 
@@ -214,7 +202,7 @@ struct RecordEditorView: View {
 
     private var addPhotoButton: some View {
         Button {
-            capture = .photo
+            CameraPresenter.present(mode: .photo) { handleCamera($0) }
         } label: {
             VStack(spacing: 4) {
                 Image(systemName: "plus")
@@ -649,7 +637,6 @@ struct RecordEditorView: View {
     // MARK: - 交互回调
 
     private func handleCamera(_ image: UIImage?) {
-        capture = nil
         guard let image = image else { return }
         if totalPhotoCount >= 6 {
             aiMessage = "最多 6 张照片"
@@ -659,7 +646,6 @@ struct RecordEditorView: View {
     }
 
     private func handleVideo(_ url: URL?) {
-        capture = nil
         guard let url = url else { return }
         if let name = store.saveVideo(from: url) {
             if let old = draft.video { store.deleteFile(named: old) }

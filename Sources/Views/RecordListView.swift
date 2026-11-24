@@ -12,7 +12,6 @@ struct RecordListView: View {
     @State private var projectFilter: String = ""
     @State private var editorPayload: EditorPayload?
     @State private var sharePayload: SharePayload?
-    @State private var cameraPresented = false
     @State private var pendingImage: UIImage?
     @State private var exportOnlyFiltered = true
     @State private var toast: String?
@@ -55,14 +54,11 @@ struct RecordListView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        cameraPresented = true
+                        CameraPresenter.present(mode: .photo) { handleCamera($0) }
                     } label: {
                         Image(systemName: "camera.fill")
                     }
                 }
-            }
-            .fullScreenCover(isPresented: $cameraPresented) {
-                CameraView(onImage: handleCamera)
             }
             .fullScreenCover(item: $editorPayload) { payload in
                 RecordEditorView(images: payload.image.map { [$0] } ?? [], existing: payload.record)
@@ -213,7 +209,7 @@ struct RecordListView: View {
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
             Button {
-                cameraPresented = true
+                CameraPresenter.present(mode: .photo) { handleCamera($0) }
             } label: {
                 Label("拍第一张", systemImage: "camera.fill")
                     .font(.system(size: 15, weight: .semibold))
@@ -287,7 +283,6 @@ struct RecordListView: View {
     }
 
     private func handleCamera(_ image: UIImage?) {
-        cameraPresented = false
         guard let image = image else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
             editorPayload = EditorPayload(image: image, record: nil)
