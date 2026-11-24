@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-13
 
     steps:
       - name: 拉取代码
@@ -114,6 +114,7 @@ jobs:
             echo ""
             echo "- 时间（UTC）：$(date -u '+%Y-%m-%d %H:%M:%S')"
             echo "- 任务结果：${{ job.status }}"
+            echo "- 运行器：macos-13"
             echo "- IPA 大小（字节）：$(stat -f%z FaultLog.ipa 2>/dev/null || echo 0)"
             echo "- 公开镜像地址：${MIRROR_URL:-（未获得）}"
             echo "- 最近提交：$(git rev-parse --short HEAD)"
