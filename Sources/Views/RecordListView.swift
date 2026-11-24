@@ -215,7 +215,7 @@ struct RecordListView: View {
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
             Button {
-                currentSheet = .camera
+                cameraPresented = true
             } label: {
                 Label("拍第一张", systemImage: "camera.fill")
                     .font(.system(size: 15, weight: .semibold))
