@@ -10,22 +10,22 @@ struct RecordListView: View {
     @State private var searchText: String = ""
     @State private var statusFilter: FaultStatus? = nil
     @State private var projectFilter: String = ""
-    @State private var currentSheet: Sheet?
+    @State private var editorPayload: EditorPayload?
+    @State private var sharePayload: SharePayload?
     @State private var cameraPresented = false
     @State private var pendingImage: UIImage?
     @State private var exportOnlyFiltered = true
     @State private var toast: String?
 
-    enum Sheet: Identifiable {
-        case editor(UIImage?, FaultRecord?)
-        case share(URL)
+    struct EditorPayload: Identifiable {
+        let id = UUID()
+        let image: UIImage?
+        let record: FaultRecord?
+    }
 
-        var id: String {
-            switch self {
-            case .editor: return "editor"
-            case .share: return "share"
-            }
-        }
+    struct SharePayload: Identifiable {
+        let id = UUID()
+        let url: URL
     }
 
     private var filtered: [FaultRecord] {
@@ -62,17 +62,15 @@ struct RecordListView: View {
                 }
             }
             .fullScreenCover(isPresented: $cameraPresented) {
-                CameraPicker(mode: .photo, onImage: handleCamera)
+                CameraView(onImage: handleCamera)
             }
-            .sheet(item: $currentSheet) { sheet in
-                switch sheet {
-                case .editor(let image, let record):
-                    RecordEditorView(images: image.map { [$0] } ?? [], existing: record)
-                        .environmentObject(store)
-                        .environmentObject(settings)
-                case .share(let url):
-                    ShareSheet(items: [url])
-                }
+            .fullScreenCover(item: $editorPayload) { payload in
+                RecordEditorView(images: payload.image.map { [$0] } ?? [], existing: payload.record)
+                    .environmentObject(store)
+                    .environmentObject(settings)
+            }
+            .sheet(item: $sharePayload) { payload in
+                ShareSheet(items: [payload.url])
             }
             .alert(isPresented: Binding(get: { toast != nil }, set: { if !$0 { toast = nil } })) {
                 Alert(title: Text("导出提示"), message: Text(toast ?? ""), dismissButton: .default(Text("好")))
@@ -274,9 +272,8 @@ struct RecordListView: View {
             toast = "导出失败，请重试"
             return
         }
-        currentSheet = nil
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-            currentSheet = .share(url)
+            sharePayload = SharePayload(url: url)
         }
     }
 
@@ -293,12 +290,12 @@ struct RecordListView: View {
         cameraPresented = false
         guard let image = image else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-            currentSheet = .editor(image, nil)
+            editorPayload = EditorPayload(image: image, record: nil)
         }
     }
 
     private func openEditor(_ record: FaultRecord) {
-        currentSheet = .editor(nil, record)
+        editorPayload = EditorPayload(image: nil, record: record)
     }
 }
 

@@ -89,7 +89,7 @@ struct RecordEditorView: View {
             .fullScreenCover(item: $capture) { item in
                 switch item {
                 case .photo:
-                    CameraPicker(mode: .photo, onImage: handleCamera)
+                    CameraView(onImage: handleCamera)
                 case .video:
                     CameraPicker(mode: .video, onImage: { _ in }, onVideo: handleVideo)
                 }

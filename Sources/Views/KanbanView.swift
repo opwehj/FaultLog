@@ -25,7 +25,7 @@ struct KanbanView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .navigationViewStyle(.stack)
-        .sheet(item: $editing) { record in
+        .fullScreenCover(item: $editing) { record in
             RecordEditorView(existing: record)
                 .environmentObject(store)
                 .environmentObject(settings)
